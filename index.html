@@ -1,0 +1,354 @@
+<html><head><style>html, body {
+  height: 100%;
+  margin: 0px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+body {
+  background: black;
+}
+.overlay {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  background: linear-gradient(20deg, #faf, #d28, #428 90%);
+  opacity: 0.6;
+  //- mix-blend-mode: lighten;
+}
+
+.building {
+  backface-visibility: hidden;
+  position: relative;
+  width: auto;
+  height: auto;
+  background: linear-gradient(90deg, #433, #766);
+}
+.story:first-of-type {
+  margin-top: 50px;
+}
+.story {
+  top: 0px;
+  left: 0px;
+  white-space: nowrap;
+  width: auto;
+  height: auto;
+  //- backface-visibility: hidden;
+  margin-bottom: 100px;
+}
+.window {
+  display: inline-block;
+  background: linear-gradient(45deg, #645, #98a 50%, #645, #98a);
+  box-shadow: inset 0px 0px 10px 10px #879;
+  border: 4px solid #311;
+  border-bottom: 4px solid #a99;
+  border-left: 4px solid #a99;
+  margin-left: 25px;
+  height: 200px;
+  width: 200px;
+}
+.window:last-of-type {
+  margin-right: 25px;k
+}
+.scanlines {
+  position: absolute;
+  pointer-events: none;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  opacity: 0.1;
+  background: linear-gradient(#000, #faf);
+  background-size: 100% 16px;
+  z-index: 100;
+  animation: scan 500ms linear infinite;
+  transform: translate3d(0,0,0);
+  backface-visibility: hidden;
+}
+
+@keyframes left {
+  0% {
+    opacity: 0;
+    transform: rotate3d(-0.4, 1, -0.4, 70deg) scale3d(0.8, 0.8, 1) translate3d(6000px, 0, 0);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate3d(-0.4, 1, -0.4, 70deg) scale3d(0.8, 0.8, 1) translate3d(-3000px, 0, 0);
+  }
+}
+@keyframes right {
+  0% {
+    opacity: 0;
+    transform: rotate3d(0.3, 1, -0.2, 250deg) scale3d(0.7, 0.7, 1) translate3d(-3000px,0,-500px);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate3d(0.3, 1, -0.2, 250deg) scale3d(0.7, 0.7, 1) translate3d(3000px,0,-500px);
+  }
+}
+
+#viewport {
+  height: 100%;
+}
+.viewport {
+  perspective: 800px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.camera, .camera * {
+  transform-style: preserve-3d;
+}
+.camera, .assembly, .assembly  > * {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+.camera {
+  transform: rotateX(0deg) rotateY(270deg) rotateZ(0deg) translate3d(0px, 0px, 0px) skewX(0deg) skewY(0deg);
+  transform-origin: 50% 50% 600px;
+}
+.camera * {
+  transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) translate3d(0px, 0px, 0px) skewX(0deg) skewY(0deg);
+}
+.floor {
+  box-shadow: inset 0px 0px 100px 5px #f0f, 0px 0px 100px 20px #f0f;
+  border: 5px solid #faf;
+  width: 1000px;
+  height: 900px;
+  //- border: 10px solid #444;
+  transform-origin: 50% 100%;o
+  background: linear-gradient(#333, #889);
+  transform: rotateX(90deg) rotateY(0deg) rotateZ(0deg) translate3d(0px, 0px, 0px) skewX(0deg) skewY(0deg);
+}
+.floor.first {
+  width: 10000px;
+}
+.assembly {
+  //- transition: all 20ms;
+}
+.surface * {
+  opacity: 0.99;
+  backface-visibility: hidden;
+}
+.signage {
+  width: 140px;
+  height: 910px;
+  transform-origin: 0% 100%;
+  box-shadow: inset 0px 0px 30px 10px #c00, 0px 0px 20px 10px red;
+  background: red;
+  border-radius: 10px;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  padding-top: 60px;
+  color: white;
+  font-weight: bold;
+  font-size: 100px;
+  line-height: 150px;
+}
+.signage {
+  animation: signage-flicker 200ms infinite;
+}
+@keyframes signage-flicker {
+  0% {
+    color: #fff;
+  }
+  100% {
+    color: #ddd;
+  }
+}</style></head><body><div id="viewport"><div class="viewport"><div class="camera"><div class="assembly"><div class="floor first"></div><div class="assembly building-container"><div class="building surface"><div class="story"><div class="window"></div><div class="window"></div><div class="window"></div><div class="window"></div></div><div class="story"><div class="window"></div><div class="window"></div><div class="window"></div><div class="window"></div></div><div class="story"><div class="window"></div><div class="window"></div><div class="window"></div><div class="window"></div></div><div class="story"><div class="window"></div><div class="window"></div><div class="window"></div><div class="window"></div></div></div><div class="signage surface">カラオケ○歌広場</div></div></div></div></div></div><div class="overlay"></div><script>// Basic manipulation functions
+const $ = document.querySelector.bind(document);
+const p = (...input) => { console.log(...input); return input[0]; }
+const div = (className, style, posRot) => {
+  const _div = document.createElement('div');
+  _div.classList.add(className.replace('.',''));
+  Object.assign(_div.style, style);
+  move(_div, ...(posRot || [null, null]), true);
+  return _div;
+};
+const rad = deg => deg * Math.PI / 180;
+const { sin, cos, max, min } = Math;
+
+const $camera = $('.camera');
+const $assembly = $('.assembly');
+
+const defaults = {
+  cameraPosRot: [[0, 0, 800], [0, 270, 0]],
+  assemblyPosRot: [[-1080, 0,0], [0, 270, 0]],
+}
+let config = {
+  persistView: true,
+  saveOnBlur: true, // not using
+  mouseLook: false,
+  // Just paste the desired state (logged to console on save) to bake it
+  bakedState: '{"cameraPosRot":[[595.0883189719716,0,2092.3329303296414],[-14,-23,0]],"assemblyPosRot":[[-2602.88426325441,-90,1091.017724911198],[0,270,0]],"config":{"persistView":true,"saveOnBlur":true,"mouseLook":false,"bakedState":""}}',
+};
+
+const engine = {
+  _frameRate: 15,
+  __lastUpdate: Date.now(),
+  shouldUpdate: () =>
+    Date.now() - engine.__lastUpdate >= 1000/engine._frameRate,
+  update(keyboard) {
+    if (this.shouldUpdate()) {
+      keyboard.run();
+      this._lastUpdate = Date.now();
+    }
+    requestAnimationFrame(() => this.update(keyboard));
+  }
+}
+move($('.building'), null, [0, 180, 0], true);
+move($('.signage'), [90,-300,800], [0, 90, 0]);
+
+const action = {
+  move: {
+    forward: () => advance([30,0,0]),
+    backward: () => advance([-30,0,0]),
+    left: () => advance([0, 0, 30]),
+    right: () => advance([0, 0, -30]),
+    up: () => advance([0, 30, 0]),
+    down: () => advance([0, -30, 0]),
+  },
+  view: {
+    save: () => {
+      const stringified = JSON.stringify({
+        cameraPosRot: [$camera._pos, $camera._rot],
+        assemblyPosRot: [$assembly._pos, $assembly._rot],
+        config,
+      });
+      window.localStorage.setItem('__kludgeFactory__', stringified);
+      p('saving view. paste to bake:', stringified);
+    },
+    load: () => {
+      const saved = window.localStorage.getItem('__kludgeFactory__') || config.bakedState;
+      if (!saved) {
+        console.warn('No save found. Ignored');
+        return false;
+      }
+      const loaded = JSON.parse(saved);
+      move($camera, ...loaded.cameraPosRot, true);
+      move($assembly, ...loaded.assemblyPosRot, true);
+      p('loading view');
+      return true;
+    },
+  },
+  config: {
+    toggleMouse: () => config.mouseLook = !config.mouseLook,
+  },
+};
+
+const keyboard = {
+  bindings: {
+    held: {
+      KeyW: action.move.forward,
+      KeyS: action.move.backward,
+      KeyA: action.move.left,
+      KeyD: action.move.right,
+      KeyO: action.move.forward,
+      KeyL: action.move.backward,
+      KeyK: action.move.left,
+      Semicolon: action.move.right,
+      Space: action.move.up,
+      ShiftRight: action.move.down,
+      ShiftLeft: action.move.down,
+    },
+    normal: {
+      KeyM: action.config.toggleMouse,
+      KeyP: action.view.save,
+      KeyI: action.view.load,
+    }
+  },
+  run() {
+    if (this.hasModifier()) return; // for now
+    for (let key in this._pressed) {
+      this._pressed[key] && this.bindings.held[key] && this.bindings.held[key]();
+    }
+  },
+  hasModifier() {
+    for (let key in this._pressed) {
+      if (this._pressed[key] === false) continue;
+      if (['Meta', 'Alt', 'Control'].some(modifier => key.includes(modifier))) {
+        return true;
+      };
+    }
+  },
+  _pressed: {},
+};
+
+// Init primary entities
+if (!action.view.load()) {
+  if (config.persistView) {
+    move($camera, ...defaults.cameraPosRot, true );
+    move($assembly, ...defaults.assemblyPosRot, true);
+  }
+}
+
+const $building = $('.building');
+move($building,[0,-370,0]);
+const $newSurfaces = stamps(
+  $building,
+  $('.assembly.building-container'),
+  [
+    [[-480, 0, 480], [0, -90, 0]],
+    [[950,0,0], [0, 180, 0]]
+  ],
+);
+
+
+document.addEventListener('keydown', ({ code }) => {
+  keyboard._pressed[code] = true;
+  !keyboard.hasModifier() && keyboard.bindings.normal[code] && keyboard.bindings.normal[code]();
+});
+document.addEventListener('keyup', ({ code }) => {
+  console.log('UNPRESSED', code);
+  keyboard._pressed[code] = false;
+});
+document.addEventListener('mousemove', ({ movementX, movementY }) => {
+
+  engine.shouldUpdate() &&
+    config.mouseLook &&
+      move($camera, null, [-movementY, movementX, 0]);
+});
+window.addEventListener('blur', e => {
+  console.log('blurred, so saving view');
+  action.view.save();
+});
+
+engine.update(keyboard);
+
+function move($el, pos, rot, absolute = false) {
+  if (absolute || !$el._pos || !$el._rot) {
+    $el._pos = pos = pos || $el._pos || [0,0,0]; // assign to best non-null value
+    $el._rot = rot = rot || $el._rot || [0,0,0];
+  } else {
+    $el._pos = pos = $el._pos.map((n, i) => (n + (pos ? pos[i] : 0)));
+    $el._rot = rot = $el._rot.map((n, i) => (n + (rot ? rot[i] : 0))%360 );
+    $el._rot[0] = min(max(-90, $el._rot[0]), 90);
+  }
+  $el.style.webkitTransform =
+    `rotateX(${rot[0]}deg) rotateY(${rot[1]}deg) rotateZ(${rot[2]}deg) translate3d(${pos[0]}px, ${pos[1]}px, ${pos[2]}px) skewX(0deg) skewY(0deg)`;
+}
+function advance(velocity, _$camera = $camera, _$assembly = $assembly) {
+  const [x, y, z] = velocity;
+  const camY = _$camera._rot[1];
+  const aX = cos(rad(camY))*x + sin(rad(camY))*z;
+  const aZ = sin(rad(camY))*x - cos(rad(camY))*z;
+  move(_$assembly, [aX, y, aZ]);
+}
+
+function stamp($node, $newParent, posRot) {
+  const { _pos, _rot } = $node;
+  const $clone = Object.assign($node.cloneNode(true), {_pos, _rot });
+  $newParent.appendChild($clone);
+  move($node, ...posRot);
+  return $clone;
+}
+
+function stamps($node, $newParent, posRots) {
+  return posRots.map(posRot => stamp($node, $newParent, posRot));
+}</script></body></html>
