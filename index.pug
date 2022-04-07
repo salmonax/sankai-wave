@@ -1,6 +1,6 @@
 html
 head
-  //- meta(name="viewport" content="width=device-width, initial-scale=1 user-scalable=0")
+  meta(name="viewport" content="width=device-width, initial-scale=1 user-scalable=0")
   title Sankai Wave
   style.
     html, body {
@@ -1731,6 +1731,7 @@ body
         const $faces = [[0,0],[0,180],[0,-90],[0,90]] // left, right, back, front
         .filter((n, i) => drawMask[i])
         .map(([rx, ry]) => {
+
           const $face = div('.building.surface',
             storyTex && styleFromTex(storyTex, {
               height: ({ height, offsets }) => height*storyCount + offsets.extendBottom,
@@ -1750,7 +1751,19 @@ body
                   ...Array(windowCount).fill().map(_ => $windowTemplate.cloneNode(true)),
                 );
               }
-              return $story;
+              /*
+                Late addition (previously just returned $story):
+                  This block is only called if the story is unbaked. Not sure why
+                  (could be that SVG does something different with the compositing layer,
+                  and I seem to not be forcing the issue with divs),
+                  but adding the SVG wrapper makes it noticeably faster.
+
+                  Because there's no real reason NOT to bake the story textures, this
+                  is basically moot.
+              */
+              const svg = document.createElement('svg');
+              svg.appendChild($story);
+              return svg;
             });
             $face.append(...$stories);
           }
