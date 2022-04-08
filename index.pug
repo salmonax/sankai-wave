@@ -381,14 +381,18 @@ head
     .hidden {
       opacity: 0;
     }
-    .megaman {
-      width: 300px;
-      height: 300px;
+    .easter-egg {
+      width: 189px;
+      height: 216px;
     }
-    .megaman img {
+
+    .easter-egg img {
       width: 100%;
       height: 100%;
+      image-rendering: pixelated;
     }
+
+
     .book-off .inner-bevel, .yosh .inner-bevel {
       position: absolute;
       width: 100%;
@@ -1097,8 +1101,7 @@ body
     .ball.sprite
     .ball-light.sprite
     .window
-    .megaman
-      img(src="megaman.gif")
+    .easter-egg
     .moon-container.surface
       .texture
       .moon-shading
@@ -1937,13 +1940,17 @@ body
         return;
       }
       Object.assign(config.runtime, saved.config.runtime);
+
+      // Not a fan of this, but allows the easter egg to be visible
+      // in the gallery:
+      insertEasterEgg();
+
       if (config.runtime.editorMode) {
         action.editor.toggleGallery();
       } else {
         init();
       }
     }
-
 
     function init() {
       engine.perspective = 1200;
@@ -1984,7 +1991,7 @@ body
       prefab.simple('.densha', [200,0,-1200], [0,90,0]);
       prefab.simple('.moon-container', [-1100,-11000,-51000], [0,56,0], [30,30,30], pilferedPerlinDump());
       //- prefab.simple('.moon-container', [-1100,-11000,-44000], [0,90,0], [30,30,30], pilferedPerlinDump());
-      prefab.simple('.megaman', [300,-5450, -150], [0,-90,0]);
+      prefab.simple('.easter-egg', [300,-5370, -240], [0,-90,0]);
 
       prefab.signage('.red-karaoke', [90, -300, 800], [0, 90, 0], [1,0]);
       prefab.signage('.book-off', [90, -100, 350], [0, 90, 0], [1,0]);
@@ -2500,7 +2507,7 @@ body
         });
     }
 
-    //- templateGallery(['.megaman']);//['.megaman', '.moon-container']);
+    //- templateGallery(['.easter-egg']);//['.easter-egg', '.moon-container']);
     function templateGallery(hideList = [], _config = config, _action = action) {
       const $showcase = $('#template-editor .flex-container');
       const $bigFirst = $('#template-editor .big-first');
@@ -2631,4 +2638,10 @@ body
         array[i] = t;
       }
       return array;
+    }
+
+    function insertEasterEgg() {
+      const img = document.createElement('img');
+      img.src = 'data:image/gif;base64,R0lGODlhFQAYAMIFAP///wAAAOr8Zi+B30np9mZQPGZQPGZQPCH/C05FVFNDQVBFMi4wAwEAAAAh/hJDdXQgd2l0aCBlemdpZi5jb20AIfkECQgABwAsAAAAABUAGAAAA314uhseLLJHq1Q1w3u0lp4XUYJTms8VAIIAvOfJrcH5ohsI1A4szy6X7wfCmUoEgmM0SNZarUAyOch1Bk0lZUrA5gLYppTr7HoxXgfZ6Thf02tteANOh+9td2dZv1f3Vg1Td04cV1xjZoEYfUodZlVWeXMNfnx+en14IQ0eCQAh+QQBCAAHACwAAAAAFQAYAAADgHi6Gh4sMvgqlMvqh7fGjWdJleCYp9MFgCAAMIpeERugcErXwO3EKNDh1oK1XKqV74EkEJKZgfPmajoJg11gIH1WrthslPsEXwNh8ZD7ME8d7AY3i3bD42v2dj6/q4cqe3xiHCRXfFNCW2B1YTsZgk9DaVCAgzSCenmXY5cikBsJADs=';
+      $('.easter-egg', true).appendChild(img);
     }
